@@ -947,7 +947,7 @@ body {
   transition: left 0.25s ease-in;
 }
 .power-on .power-button {
-  left: 100px;
+  left: 125px;
 }
 .power-button div {
   margin: 22px auto 0;

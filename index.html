@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="gameboy.css">
 </head>
 <body>
-  <div class="gameboy">
+  <div class="gameboy power-on">
     <div class="front-plate">
       <div class="front-plate-head">
         <div class="vertical-stripe"></div>
@@ -120,4 +120,16 @@
     <div class="power-button"><div></div></div>
   </div>
 </body>
+<script>
+
+document.querySelector('.power-button').addEventListener('click', function(event) {
+  event.preventDefault();
+  var target = document.querySelector('.gameboy');
+  if (target.classList.contains('power-on')) {
+    target.classList.remove('power-on');
+  } else {
+    target.classList.add('power-on');
+  }
+});
+</script>
 </html>
