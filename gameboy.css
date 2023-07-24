@@ -1,6 +1,6 @@
-body {
+.game-boy-wrapper {
   display: flex;
-  height: 100vh;
+  height: 90vh;
   align-items: center;
   justify-content: center;
 }
@@ -970,4 +970,10 @@ body {
 }
 .game-container.hidden .game-canvas {
   opacity: 0;
+}
+
+#log {
+  height: 200px;
+  width: 600px;
+  overflow: scroll;
 }
