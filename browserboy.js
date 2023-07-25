@@ -1,19 +1,22 @@
 function draw() {
   canvasContext.font = 'bold 12px Arial';
   canvasContext.fillStyle = 'black';
-  canvasContext.fillText("Hello World!", 0, 12);
-
+  canvasContext.fillText("Hello World!", 0, 50);
 
 }
 
 function powerOn(){
+  startSequence();
   buttonTouchOrClick(touchAndClickableIDs);
   draw();
   log('power on');
 };
+
 function powerOff(){
   log('power off');
   canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+  video.classList.remove("hide");
+
 };
 
 document.querySelector('.power-button').addEventListener('click', function(event) {

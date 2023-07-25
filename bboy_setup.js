@@ -146,5 +146,16 @@ function buttonTouchOrClick(touchAndClickableIDs){
     console.log('listeners added')
 };
 
+function startSequence(){
+    const video = document.getElementById("video")
+    video.load()
+    video.play()
+    video.addEventListener("ended", (event) => {
+        log("Video stopped either because it has finished playing or no further data is available.");
+        video.classList.add("hide");
+      });
+
+};
+
 
 

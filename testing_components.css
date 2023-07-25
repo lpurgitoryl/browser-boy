@@ -6,3 +6,7 @@
     overflow: auto;
 
   }
+
+  #video {
+    opacity: .3;
+  }
