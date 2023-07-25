@@ -7,6 +7,7 @@
   <title>Browser Boy by lpurgitoryl</title>
 
   <link rel="stylesheet" href="gameboy.css">
+  <link rel="stylesheet" href="testing_components.css">
 </head>
 <body>
   <header>
@@ -17,6 +18,9 @@
   </header>
 
   <section class="game-boy-wrapper">
+    <!-- TODO: comment out log item when done testing -->
+    Log:
+    <pre id="log" style="border: 5px solid #ccc;"></pre>
     <div class="gameboy ">
       <div class="front-plate">
         <div class="front-plate-head">
@@ -48,10 +52,9 @@
           </div>
     
           <div class="screen">
-            <br />
-            Log:
-            <pre id="log" style="border: 5px solid #ccc;"></pre>
-    
+            <div class="game-container">
+              <canvas id="mainCanvas" class="game-canvas" width="176" height="158">No Canvas Support</canvas>
+            </div>
           </div>
         </div>
     
@@ -130,6 +133,6 @@
     </div>
   </section>
 </body>
-<script src="browserboy.js"></script>
 <script src="bboy_setup.js"></script>
+<script src="browserboy.js"></script>
 </html>

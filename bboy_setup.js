@@ -13,6 +13,10 @@ const action_keys = {
 const touchAndClickableIDs = ['controller_up','controller_down', 'controller_left', 'controller_right',
     'controller_a', 'controller_b', 'controller_start', 'controller_select'];
 
+const canvas = document.getElementById("mainCanvas");
+const canvasContext = canvas.getContext("2d");
+let gameOn = false;
+
 function log(msg) {
 
     const container = document.getElementById("log");
@@ -142,4 +146,5 @@ function buttonTouchOrClick(touchAndClickableIDs){
     console.log('listeners added')
 };
 
-buttonTouchOrClick(touchAndClickableIDs);
+
+
