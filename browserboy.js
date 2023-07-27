@@ -232,6 +232,7 @@ function runBrowserBoy() {
 // ! this code runs everything
 var interval = 0;
 function init() {
+  window.requestAnimationFrame(init)
   log("this is the game flag " + gameOn)
   if (!gameOn) {
     log("game is not on")
@@ -255,4 +256,5 @@ document.querySelector('.power-button').addEventListener('click', function (even
 });
 
 
-setInterval(init, 1000)
+// setInterval(init, 1000)
+window.requestAnimationFrame(init)
