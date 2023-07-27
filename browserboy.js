@@ -25,26 +25,27 @@ function log(msg) {
 
 };
 window.addEventListener('keydown', (event) => {
-  if (!(event.key in action_keys)){
-      log("key has no action");
-      return
+  if (!(event.key in action_keys)) {
+    log("key has no action");
+    return
   }
   action_keys[event.key].pressed = true;
   event.preventDefault();
   log(event.key + " keydown");
+  log("this is the action key value " + action_keys[event.key].pressed );
 });
 
 
 window.addEventListener('keyup', (event) => {
-  if (!(event.key in action_keys)){
-      log("key has no action");
-      return
+  if (!(event.key in action_keys)) {
+    log("key has no action");
+    return
   }
   action_keys[event.key].pressed = false;
   event.preventDefault();
   log(event.key + " no longer pressed");
-
   log(event.key + " keyup");
+  log("this is the action key value " + action_keys[event.key].pressed );
 });
 
 function handleStart(evt) {
@@ -52,7 +53,7 @@ function handleStart(evt) {
   const touches = evt.changedTouches;
 
   for (let i = 0; i < touches.length; i++) {
-      log(`target ${this.id} touch with id ${touches[i].identifier} started`);
+    log(`target ${this.id} touch with id ${touches[i].identifier} started`);
   }
 
 };
@@ -62,7 +63,7 @@ function handleEnd(evt) {
   const touches = evt.changedTouches;
 
   for (let i = 0; i < touches.length; i++) {
-      log(`target ${this.id} touch with id ${touches[i].identifier} ended`);
+    log(`target ${this.id} touch with id ${touches[i].identifier} ended`);
   }
 };
 
@@ -77,12 +78,12 @@ function handleUp(evt) {
 
 function buttonTouchOrClick(touchAndClickableIDs) {
   for (let i = 0; i < touchAndClickableIDs.length; i++) {
-      document.getElementById(touchAndClickableIDs[i]).addEventListener("touchstart", handleStart);
-      document.getElementById(touchAndClickableIDs[i]).addEventListener("touchend", handleEnd);
+    document.getElementById(touchAndClickableIDs[i]).addEventListener("touchstart", handleStart);
+    document.getElementById(touchAndClickableIDs[i]).addEventListener("touchend", handleEnd);
 
-      document.getElementById(touchAndClickableIDs[i]).addEventListener("mouseup", handleUp);
-      document.getElementById(touchAndClickableIDs[i]).addEventListener("mousedown", handleDown);
-      log(touchAndClickableIDs[i]);
+    document.getElementById(touchAndClickableIDs[i]).addEventListener("mouseup", handleUp);
+    document.getElementById(touchAndClickableIDs[i]).addEventListener("mousedown", handleDown);
+    log(touchAndClickableIDs[i]);
   }
   console.log('listeners added')
 };
@@ -98,56 +99,89 @@ function startSequence() {
 // game can have a list of drawables, will have a gameOver , gameStart
 
 class Drawable {
-  constructor(x, y, w, h, frameRate, canvasContext ) {
-      this.x = x;
-      this.y = y;
-      this.w = w;
-      this.h = h;
-      this.frameRate = frameRate;
-      this.ctx = canvasContext;
+  constructor(x, y, w, h, frameRate, canvasContext) {
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.frameRate = frameRate;
+    this.ctx = canvasContext;
   }
 
   // A method used to draw the drawable as a rect.
   draw() {
-      this.ctx.rect(this.x, this.y, this.w, this.h);
-      this.ctx.fill();
+    this.ctx.rect(this.x, this.y, this.w, this.h);
+    this.ctx.fill();
 
   }
 
-  update(ctx){
-      this.draw();
+  update(ctx) {
+    this.draw();
   }
 
 };
 
 // playable is a single drawable instance, enemyList is a list of drawable enemys
 // configs is a 
-class gameObject{
-  constructor (playable, enemyList, objectList, gameName){
-      this.playable = playable
-      this.enemyList = enemyList;
-      this.objectList = objectList;
-      this.gameName = gameName;
+class gameObject {
+  constructor(playable, enemyList, objectList, gameName) {
+    this.playable = playable
+    this.enemyList = enemyList;
+    this.objectList = objectList;
+    this.gameName = gameName;
   };
 
-  runGame(){
-      log("running: " + this.gameName);
+  runGame() {
+    log("running: " + this.gameName);
   }
 
 };
 
 // ! here is the brick game instantiation
 class brickGame extends gameObject {
-  constructor(paddle, ball, brickList, name ){
-      super(paddle, ball, brickList, name);
+  constructor(paddle, ball, brickList, name) {
+    super(paddle, ball, brickList, name);
   }
 
 }
 
-const paddle = new Drawable(50,50,10,10,1);
-const playBrick = new brickGame(paddle,0,0, "brick");
+const paddle = new Drawable(50, 50, 10, 10, 1, canvasContext);
+
+
+function paddleMoveRight() {
+  paddle.x += 10;
+  log('paddle moved right');
+}
+
+const paddleAction = {
+  a: { func: false },
+  d: { func: false },
+  c: { func: false },
+  v: { func: false },
+  ArrowRight:  { func : paddleMoveRight },
+  ArrowLeft: { func: false },
+  ArrowUp: { func: false },
+  ArrowDown: { func: false },
+
+};
+
+function paddleHandler() {
+  temp = Object.keys(action_keys);
+  temp.forEach(element => {
+    log( "this is the key being checked" + element)
+    log("this is the value " + action_keys[element].pressed)
+    if (action_keys[element].pressed) {
+      paddleAction[element].func();
+      log('key action for paddle')
+    }
+  });
+
+};
+
+
+const playBrick = new brickGame(paddle, 0, 0, "brick");
 // ! this is helper code
-function drawText(text,  xpos, ypos, font = 'bold 12px Arial') {
+function drawText(text, xpos, ypos, font = 'bold 12px Arial') {
   canvasContext.font = font;
   canvasContext.fillStyle = 'black';
   canvasContext.fillText(text, xpos, ypos);
@@ -161,10 +195,20 @@ function powerOn() {
   gameOn = true;
 };
 
+function resetActionKeys(){
+  temp = Object.keys(action_keys);
+  temp.forEach(element => {
+    log( "this is the key being reset" + element);
+    log("this is the value before" + action_keys[element].pressed);
+    action_keys[element].pressed = false;
+    log("this is the value after" + action_keys[element].pressed);
+  });
+}
 function powerOff() {
   log('power off');
   canvasContext.clearRect(0, 0, canvas.width, canvas.height);
   video.classList.remove("hide");
+  resetActionKeys()
   gameOn = false;
 
 };
@@ -172,20 +216,31 @@ function powerOff() {
 function runBrowserBoy() {
   // TODO: uncooment the ended listener when finished with game and menu and the start sequence in poweron()
   // video.addEventListener("ended", (event) => {
-    log("Video stopped either because it has finished playing or no further data is available.");
-    video.classList.add("hide");
-    drawText("hello",150, 60 );
-    drawText("wassup", 0,  40);
-    // mainMenu();
-    // brickGame();
+  log("Video stopped either because it has finished playing or no further data is available.");
+  video.classList.add("hide");
+  drawText("hello", 150, 60);
+  drawText("wassup", 0, 40);
+  // mainMenu();
+  // brickGame();
   // });
   playBrick.runGame();
-  paddleHandler(); 
-  paddle.update(); 
+  paddleHandler();
+  paddle.update();
 
 };
 
 // ! this code runs everything
+var interval = 0;
+function init() {
+  log("this is the game flag " + gameOn)
+  if (!gameOn) {
+    log("game is not on")
+    return;
+  } else{
+    runBrowserBoy();
+  }
+
+}
 
 document.querySelector('.power-button').addEventListener('click', function (event) {
   event.preventDefault();
@@ -193,22 +248,11 @@ document.querySelector('.power-button').addEventListener('click', function (even
   if (target.classList.contains('power-on')) {
     target.classList.remove('power-on');
     powerOff();
-    clearInterval(interval)
   } else {
     target.classList.add('power-on');
     powerOn();
-    init();
   }
 });
 
-var interval = 0;
-function init(){
-  log(gameOn)
-    if (!gameOn){
-      log(gameOn)
-      return;
-    }
 
-    setInterval(runBrowserBoy(),10);
-
-}
+setInterval(init, 1000)
