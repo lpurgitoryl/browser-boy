@@ -9,4 +9,5 @@ Martin's website was a big inspiration and I dedcided to create the game in java
 [Start up video by Benjamin Walsh.](https://github.com/attackemartin/css-gameboy)
 
 https://betterprogramming.pub/create-a-simple-2d-hunting-game-with-javascript-and-html-1cb78e01a69e
+https://stackoverflow.com/questions/16345870/keydown-keyup-events-for-specific-keys
 
