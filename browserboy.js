@@ -230,18 +230,6 @@ function runBrowserBoy() {
 };
 
 // ! this code runs everything
-var interval = 0;
-function init() {
-  window.requestAnimationFrame(init)
-  log("this is the game flag " + gameOn)
-  if (!gameOn) {
-    log("game is not on")
-    return;
-  } else{
-    runBrowserBoy();
-  }
-
-}
 
 document.querySelector('.power-button').addEventListener('click', function (event) {
   event.preventDefault();
@@ -255,6 +243,16 @@ document.querySelector('.power-button').addEventListener('click', function (even
   }
 });
 
+function init() {
+  window.requestAnimationFrame(init)
+  log("this is the game flag " + gameOn)
+  if (!gameOn) {
+    log("game is not on")
+    return;
+  } 
+  runBrowserBoy();
+  
+}
 
-// setInterval(init, 1000)
+
 window.requestAnimationFrame(init)
