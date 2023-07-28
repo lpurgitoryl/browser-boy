@@ -117,14 +117,14 @@ class Drawable {
 
   }
 
-  update(ctx) {
+  update() {
     this.draw();
   }
 
 };
 
 // playable is a single drawable instance, enemyList is a list of drawable enemys
-// configs is a 
+
 class gameObject {
   constructor(playable, enemyList, objectList, gameName) {
     this.playable = playable
@@ -179,30 +179,89 @@ function paddleHandler() {
 class Ball extends Drawable {
   constructor(x, y, w, h, radius, canvasContext){
     super(x, y, 0, 0, canvasContext);
-    this.radus = radius;
+    this.radius = radius;
     this.startAngle = 0
     this.endAngle = Math.PI * 2;
   }
 
   draw(){
     this.ctx.beginPath();
-    this.ctx.arc(this.x, this.y, this.radus, this.startAngle, this.endAngle, false);
+    this.ctx.arc(this.x, this.y, this.radius, this.startAngle, this.endAngle, false);
     this.ctx.fill();
     this.ctx.closePath();
   }
 
 }
 
+var deltaXBall = 2;
+var deltaYBall = -2;
+
+function checkAnyKeypress(){
+  temp = Object.keys(action_keys);
+  flag = false;
+
+  temp.forEach(element => {
+    if (action_keys[element].pressed) {
+      flag = true;
+    }
+  });
+
+  return flag;
+}
+
+function ballPhysics(){
+  // bounce off walls
+  if( ball.x + deltaXBall < canvas.width - ball.radius) {
+    ball.x += deltaXBall;
+  } 
+  if( ball.x + deltaXBall >= canvas.width - ball.radius) {
+    deltaXBall = -deltaXBall;
+    ball.x += deltaXBall;
+  }
+  if( ball.x + deltaXBall == 0 ) {
+    deltaXBall = -deltaXBall;
+    ball.x += deltaXBall;
+  }
+
+  if( ball.y + deltaYBall >= 0 ) {
+    ball.y += deltaYBall;
+  }
+  if( ball.y + deltaYBall < 0 ) {
+    deltaYBall = -deltaYBall;
+    ball.y += deltaYBall;
+  }
+  if( ball.y + deltaYBall >= canvas.height - ball.radius ) {
+    deltaYBall = -deltaYBall;
+    ball.y += deltaYBall;
+  }
+
+
+
+  console.log(ball.x);
+  // then bounce off bricks
+}
+
 class brickGame extends gameObject {
   constructor(paddle, ball, brickList, name) {
     super(paddle, ball, brickList, name);
+    this.started = false;
   }
 
   runGame(){
+    if(!this.started){
+      this.started = checkAnyKeypress();
+      log('no keys pressed yet for brick');
+      ball.update();
+      paddle.update();
+      return
+    }
     super.runGame();
-    ball.draw();
+    ballPhysics();
     paddleHandler();
+    ball.update();
     paddle.update();
+
+    
   }
 }
 
@@ -252,17 +311,16 @@ function runBrowserBoy() {
 
   canvasContext.beginPath();
   canvasContext.clearRect(0,0,canvas.width, canvas.height);
-  // drawText("hello", 150, 60);
-  // drawText("wassup", 0, 40);
-  // mainMenu();
-  // brickGame();
-  // });
-  playBrick.runGame();
   canvasContext.closePath();
-
+  playBrick.runGame();
+  // });
+  
 };
 
 // ! this code runs everything
+// TODO: reset all vars upon power off
+// TODO: menu
+
 
 document.querySelector('.power-button').addEventListener('click', function (event) {
   event.preventDefault();
@@ -270,6 +328,9 @@ document.querySelector('.power-button').addEventListener('click', function (even
   if (target.classList.contains('power-on')) {
     target.classList.remove('power-on');
     powerOff();
+    canvasContext.beginPath();
+    canvasContext.clearRect(0,0,canvas.width, canvas.height);
+    canvasContext.closePath();
   } else {
     target.classList.add('power-on');
     powerOn();
