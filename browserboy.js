@@ -99,19 +99,21 @@ function startSequence() {
 // game can have a list of drawables, will have a gameOver , gameStart
 
 class Drawable {
-  constructor(x, y, w, h, frameRate, canvasContext) {
+  constructor(x, y, w, h, canvasContext) {
     this.x = x;
     this.y = y;
     this.w = w;
     this.h = h;
-    this.frameRate = frameRate;
+  
     this.ctx = canvasContext;
   }
 
   // A method used to draw the drawable as a rect.
   draw() {
+    this.ctx.beginPath();
     this.ctx.rect(this.x, this.y, this.w, this.h);
     this.ctx.fill();
+    this.ctx.closePath();
 
   }
 
@@ -138,15 +140,6 @@ class gameObject {
 };
 
 // ! here is the brick game instantiation
-class brickGame extends gameObject {
-  constructor(paddle, ball, brickList, name) {
-    super(paddle, ball, brickList, name);
-  }
-
-}
-
-const paddle = new Drawable( canvas.width / 2, canvas.height - 15 , canvas.width / 5 , 5, 1, canvasContext);
-
 
 function paddleMoveRight() {
   paddle.x += 10;
@@ -183,8 +176,40 @@ function paddleHandler() {
 
 };
 
+class Ball extends Drawable {
+  constructor(x, y, w, h, radius, canvasContext){
+    super(x, y, 0, 0, canvasContext);
+    this.radus = radius;
+    this.startAngle = 0
+    this.endAngle = Math.PI * 2;
+  }
 
+  draw(){
+    this.ctx.beginPath();
+    this.ctx.arc(this.x, this.y, this.radus, this.startAngle, this.endAngle, false);
+    this.ctx.fill();
+    this.ctx.closePath();
+  }
+
+}
+
+class brickGame extends gameObject {
+  constructor(paddle, ball, brickList, name) {
+    super(paddle, ball, brickList, name);
+  }
+
+  runGame(){
+    super.runGame();
+    ball.draw();
+    paddleHandler();
+    paddle.update();
+  }
+}
+
+const ball = new Ball(100, 75, 0, 0, 5, canvasContext);
+const paddle = new Drawable( canvas.width / 2, canvas.height - 15 , canvas.width / 5 , 5, canvasContext);
 const playBrick = new brickGame(paddle, 0, 0, "brick");
+
 // ! this is helper code
 function drawText(text, xpos, ypos, font = 'bold 12px Arial') {
   canvasContext.font = font;
@@ -227,14 +252,12 @@ function runBrowserBoy() {
 
   canvasContext.beginPath();
   canvasContext.clearRect(0,0,canvas.width, canvas.height);
-  drawText("hello", 150, 60);
-  drawText("wassup", 0, 40);
+  // drawText("hello", 150, 60);
+  // drawText("wassup", 0, 40);
   // mainMenu();
   // brickGame();
   // });
   playBrick.runGame();
-  paddleHandler();
-  paddle.update();
   canvasContext.closePath();
 
 };
