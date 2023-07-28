@@ -214,23 +214,23 @@ function ballPhysics(){
   if( ball.x + deltaXBall < canvas.width - ball.radius) {
     ball.x += deltaXBall;
   } 
-  if( ball.x + deltaXBall >= canvas.width - ball.radius) {
+  if( ball.x + deltaXBall > canvas.width - ball.radius) {
     deltaXBall = -deltaXBall;
     ball.x += deltaXBall;
   }
-  if( ball.x + deltaXBall == 0 ) {
+  if( ball.x + deltaXBall < 0 ) {
     deltaXBall = -deltaXBall;
     ball.x += deltaXBall;
   }
 
-  if( ball.y + deltaYBall >= 0 ) {
+  if( ball.y + deltaYBall > 0 ) {
     ball.y += deltaYBall;
   }
   if( ball.y + deltaYBall < 0 ) {
     deltaYBall = -deltaYBall;
     ball.y += deltaYBall;
   }
-  if( ball.y + deltaYBall >= canvas.height - ball.radius ) {
+  if( ball.y + deltaYBall > canvas.height - ball.radius ) {
     deltaYBall = -deltaYBall;
     ball.y += deltaYBall;
   }
