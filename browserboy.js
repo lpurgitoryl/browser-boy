@@ -145,12 +145,17 @@ class brickGame extends gameObject {
 
 }
 
-const paddle = new Drawable(50, 50, 10, 10, 1, canvasContext);
+const paddle = new Drawable( canvas.width / 2, canvas.height - 15 , canvas.width / 5 , 5, 1, canvasContext);
 
 
 function paddleMoveRight() {
   paddle.x += 10;
   log('paddle moved right');
+}
+
+function paddleMoveLeft() {
+  paddle.x -= 10;
+  log('paddle moved left');
 }
 
 const paddleAction = {
@@ -159,7 +164,7 @@ const paddleAction = {
   c: { func: false },
   v: { func: false },
   ArrowRight:  { func : paddleMoveRight },
-  ArrowLeft: { func: false },
+  ArrowLeft: { func: paddleMoveLeft },
   ArrowUp: { func: false },
   ArrowDown: { func: false },
 
@@ -195,6 +200,7 @@ function powerOn() {
   gameOn = true;
 };
 
+// ! i dont think i need this function but idk
 function resetActionKeys(){
   temp = Object.keys(action_keys);
   temp.forEach(element => {
@@ -206,7 +212,7 @@ function resetActionKeys(){
 }
 function powerOff() {
   log('power off');
-  canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+  // canvasContext.clearRect(0, 0, canvas.width, canvas.height);
   video.classList.remove("hide");
   resetActionKeys()
   gameOn = false;
@@ -218,6 +224,9 @@ function runBrowserBoy() {
   // video.addEventListener("ended", (event) => {
   log("Video stopped either because it has finished playing or no further data is available.");
   video.classList.add("hide");
+
+  canvasContext.beginPath();
+  canvasContext.clearRect(0,0,canvas.width, canvas.height);
   drawText("hello", 150, 60);
   drawText("wassup", 0, 40);
   // mainMenu();
@@ -226,6 +235,7 @@ function runBrowserBoy() {
   playBrick.runGame();
   paddleHandler();
   paddle.update();
+  canvasContext.closePath();
 
 };
 
