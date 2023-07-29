@@ -141,14 +141,17 @@ class gameObject {
 };
 
 // ! here is the brick game instantiation
+const deltaXPaddle = 10;
 
 function paddleMoveRight() {
-  paddle.x += 10;
+  if(paddle.w + paddle.x + deltaXPaddle < canvas.width)
+    {paddle.x += deltaXPaddle;}
   console.log('paddle moved right');
 }
 
 function paddleMoveLeft() {
-  paddle.x -= 10;
+  if( paddle.x > 0)
+      paddle.x -= deltaXPaddle;
   console.log('paddle moved left');
 }
 
@@ -232,12 +235,16 @@ function ballPhysics(){
     ball.y += deltaYBall;
   }
   if( ball.y + deltaYBall > canvas.height - ball.radius ) {
-    deltaYBall = -deltaYBall;
-    ball.y += deltaYBall;
+    return true;
   }
 
+  // if( ball.y + deltaYBall > canvas.height - ball.radius ) {
+  //   deltaYBall = -deltaYBall;
+  //   ball.y += deltaYBall;
+  // }
 
 
+  return false;
   console.log(ball.x);
   // then bounce off bricks
 }
@@ -246,6 +253,7 @@ class brickGame extends gameObject {
   constructor(paddle, ball, brickList, name) {
     super(paddle, ball, brickList, name);
     this.started = false;
+    this.gameOver = false;
   }
 
   runGame(){
@@ -257,11 +265,15 @@ class brickGame extends gameObject {
       return
     }
     super.runGame();
-    ballPhysics();
+    if(this.gameOver){
+      drawText("GAME OVER: YOU LOST", 20, canvas.height/2);
+      return;
+    }
+    this.gameOver = ballPhysics();
     paddleHandler();
     ball.update();
     paddle.update();
-
+    
     
   }
 }
