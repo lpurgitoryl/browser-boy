@@ -215,33 +215,33 @@ function checkAnyKeypress(){
 
 function ballPhysics(){
   // bounce off walls
-  if( ball.x + deltaXBall < canvas.width - ball.radius) {
+  if( ball.x + deltaXBall < canvas.width - ball.radius) { // hasnt hit right wall yet
     ball.x += deltaXBall;
   } 
-  if( ball.x + deltaXBall > canvas.width - ball.radius) {
+  if( ball.x + deltaXBall > canvas.width - ball.radius) { // hits right wall and changes direction
     deltaXBall = -deltaXBall;
     ball.x += deltaXBall;
   }
-  if( ball.x + deltaXBall < 0 ) {
+  if( ball.x + deltaXBall < 0 ) {  // hits left wall and changes direction
     deltaXBall = -deltaXBall;
     ball.x += deltaXBall;
   }
 
-  if( ball.y + deltaYBall > 0 ) {
+  if( ball.y + deltaYBall > 0 ) { // hasnt hit top
     ball.y += deltaYBall;
   }
-  if( ball.y + deltaYBall < 0 ) {
+  if( ball.y + deltaYBall < 0 ) { // hits top and changes direction
     deltaYBall = -deltaYBall;
     ball.y += deltaYBall;
   }
-  if( ball.y + deltaYBall > canvas.height - ball.radius ) {
+  if( ball.y + deltaYBall > canvas.height - ball.radius ) { // ball hits floor
     return true;
   }
 
-  // if( ball.y + deltaYBall > canvas.height - ball.radius ) {
-  //   deltaYBall = -deltaYBall;
-  //   ball.y += deltaYBall;
-  // }
+  if( (ball.y + deltaYBall > paddle.y - ball.radius ) && (ball.x > paddle.x) && (ball.x < paddle.x + paddle.w) ) { // ball hits paddle but not floor and redirects
+    deltaYBall = -deltaYBall;
+    ball.y += deltaYBall;
+  }
 
 
   return false;
@@ -273,7 +273,7 @@ class brickGame extends gameObject {
     paddleHandler();
     ball.update();
     paddle.update();
-    
+
     
   }
 }
