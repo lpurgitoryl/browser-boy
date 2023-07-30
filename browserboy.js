@@ -213,7 +213,7 @@ function checkAnyKeypress(){
   return flag;
 }
 
-function ballPhysics(){
+function ballPhysics(brick){
   // bounce off walls
   if( ball.x + deltaXBall < canvas.width - ball.radius) { // hasnt hit right wall yet
     ball.x += deltaXBall;
@@ -234,7 +234,7 @@ function ballPhysics(){
     deltaYBall = -deltaYBall;
     ball.y += deltaYBall;
   }
-  if( ball.y + deltaYBall > canvas.height - ball.radius ) { // ball hits floor
+  if( ball.y + deltaYBall > canvas.height - ball.radius ) { // ball hits floor, sets gameOver to true
     return true;
   }
 
@@ -242,11 +242,39 @@ function ballPhysics(){
     deltaYBall = -deltaYBall;
     ball.y += deltaYBall;
   }
-
+  if(didBallHitBrick(brick)){
+    deltaYBall = -deltaYBall;
+    ball.y += deltaYBall;
+  }
 
   return false;
-  console.log(ball.x);
-  // then bounce off bricks
+}
+class Brick extends Drawable {
+  constructor(x, y, w, h, maxHits, canvasContext){
+    super(x, y, w, h, canvasContext);
+    this.hits = 0;
+    this.maxHits = maxHits;
+  }
+
+  update(){
+    if(this.hits >= this.maxHits){
+      this.ctx.beginPath();
+      this.ctx.clearRect(this.x,this.y,this.w, this.h);
+      this.ctx.closePath();
+    } else {
+      super.update();
+    }
+  }
+
+};
+
+function didBallHitBrick(brick){
+  if ((ball.x > brick.x - ball.radius) && (ball.x < brick.x + brick.w - ball.radius) && (ball.y > brick.y - ball.radius) && (ball.y < brick.y - ball.radius + brick.h)){
+    brick.hits += 1;
+    drawText('hit', 50,50);
+    return true;
+  }
+  return false;
 }
 
 class brickGame extends gameObject {
@@ -262,6 +290,7 @@ class brickGame extends gameObject {
       console.log('no keys pressed yet for brick');
       ball.update();
       paddle.update();
+      bricks.update();
       return
     }
     super.runGame();
@@ -269,18 +298,29 @@ class brickGame extends gameObject {
       drawText("GAME OVER: YOU LOST", 20, canvas.height/2);
       return;
     }
-    this.gameOver = ballPhysics();
+    this.gameOver = ballPhysics(bricks);
     paddleHandler();
     ball.update();
     paddle.update();
-
+    bricks.update();
     
   }
 }
 
-const ball = new Ball(100, 75, 0, 0, 5, canvasContext);
-const paddle = new Drawable( canvas.width / 2, canvas.height - 15 , canvas.width / 5 , 5, canvasContext);
-const playBrick = new brickGame(paddle, 0, 0, "brick");
+// intial paddle values
+const paddleY = canvas.height - 15; 
+const paddleX = canvas.width / 2;
+const paddleW = canvas.width / 5;
+const paddleH = 5;
+
+const ballX = canvas.width / 2;
+const ballY = canvas.height /2;
+const ballR = 5;
+
+const ball = new Ball(ballX, ballY, 0, 0, ballR, canvasContext);
+const paddle = new Drawable( paddleX , paddleY , paddleW , paddleH, canvasContext);
+const bricks = new Brick( 10, 50 , paddleW / 2 , paddleH * 2, 2, canvasContext);
+const playBrick = new brickGame(paddle, ball, 0, "brick");
 
 // ! this is helper code
 function drawText(text, xpos, ypos, font = 'bold 12px Arial') {
