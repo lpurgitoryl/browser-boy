@@ -17,6 +17,31 @@ const touchAndClickableIDs = ['controller_up', 'controller_down', 'controller_le
 const canvas = document.getElementById("mainCanvas");
 const canvasContext = canvas.getContext("2d");
 let gameOn = false;
+
+// intial values
+const paddleY = canvas.height - 15; 
+const paddleX = canvas.width / 2;
+const paddleW = canvas.width / 5;
+const paddleH = 5;
+
+const brickCols = 8;
+const brickRows = 4;
+const brickOffsetX = 5;
+const brickOffsetY = 3; 
+const brickW =  paddleW / 2 ;
+const brickH = paddleH * 2;
+
+const ballX = canvas.width / 2;
+const ballY = canvas.height /2;
+const ballR = 5;
+
+// ball x/y movement 
+var deltaXBall = 2;
+var deltaYBall = -2;
+
+// paddle movement
+const deltaXPaddle = 2;
+
 // Uncomment function below for on screen log
 // function log(msg) {
 
@@ -24,6 +49,8 @@ let gameOn = false;
 //   container.textContent = `${msg} \n${container.textContent}`;
 
 // };
+
+// click and keyboard listners
 
 window.addEventListener('keydown', (event) => {
   if (!(event.key in action_keys)) {
@@ -84,16 +111,9 @@ function buttonTouchOrClick(touchAndClickableIDs) {
   console.log('listeners added')
 };
 
-function startSequence() {
-  const video = document.getElementById("video")
-  video.load()
-  video.play()
-};
-
 //! here are the diffrent classes
-
-// game can have a list of drawables, will have a gameOver , gameStart
-
+// using classes v loosley just so i can call update on each object easily
+// im consiously not following best practices for OOP since this is a small game
 class Drawable {
   constructor(x, y, w, h, canvasContext) {
     this.x = x;
@@ -119,7 +139,60 @@ class Drawable {
 
 };
 
-// playable is a single drawable instance, enemyList is a list of drawable enemys
+class Ball extends Drawable {
+  constructor(x, y, w, h, radius, canvasContext){
+    super(x, y, 0, 0, canvasContext);
+    this.radius = radius;
+    this.startAngle = 0
+    this.endAngle = Math.PI * 2;
+  }
+
+  draw(){
+    this.ctx.beginPath();
+    this.ctx.arc(this.x, this.y, this.radius, this.startAngle, this.endAngle, false);
+    this.ctx.fill();
+    this.ctx.closePath();
+  }
+
+}
+
+function checkAnyKeypress(){
+  temp = Object.keys(action_keys);
+  flag = false;
+
+  temp.forEach(element => {
+    if (action_keys[element].pressed) {
+      flag = true;
+    }
+  });
+
+  return flag;
+}
+
+class Brick extends Drawable {
+  constructor(x, y, w, h, maxHits, canvasContext){
+    super(x, y, w, h, canvasContext);
+    this.hits = 0;
+    this.maxHits = maxHits;
+    this.removed = false;
+  }
+
+  update(){
+    if((this.hits >= this.maxHits)){
+      if(this.removed)
+        return
+      this.ctx.beginPath();
+      this.ctx.clearRect(this.x,this.y,this.w, this.h);
+      this.ctx.closePath();
+      this.removed = true;
+    } else {
+      super.update();
+    }
+  }
+
+};
+// game can have a list of drawables, will have a gameOver , gameStart
+// playable is a single drawable instance, enemyList is a list of drawables
 
 class gameObject {
   constructor(playable, enemyList, objectList, gameName) {
@@ -135,8 +208,6 @@ class gameObject {
 
 };
 
-// ! here is the brick game instantiation
-const deltaXPaddle = 2;
 
 function paddleMoveRight() {
   if(paddle.w + paddle.x + deltaXPaddle < canvas.width)
@@ -172,39 +243,6 @@ function paddleHandler() {
   });
 
 };
-
-class Ball extends Drawable {
-  constructor(x, y, w, h, radius, canvasContext){
-    super(x, y, 0, 0, canvasContext);
-    this.radius = radius;
-    this.startAngle = 0
-    this.endAngle = Math.PI * 2;
-  }
-
-  draw(){
-    this.ctx.beginPath();
-    this.ctx.arc(this.x, this.y, this.radius, this.startAngle, this.endAngle, false);
-    this.ctx.fill();
-    this.ctx.closePath();
-  }
-
-}
-
-var deltaXBall = 2;
-var deltaYBall = -2;
-
-function checkAnyKeypress(){
-  temp = Object.keys(action_keys);
-  flag = false;
-
-  temp.forEach(element => {
-    if (action_keys[element].pressed) {
-      flag = true;
-    }
-  });
-
-  return flag;
-}
 
 function ballPhysics(brick){
   // bounce off walls
@@ -245,35 +283,9 @@ function ballPhysics(brick){
   }
   }
   
-  // if(didBallHitBrick(brick)){
-  //   deltaYBall = -deltaYBall;
-  //   ball.y += deltaYBall;
-  // }
-
   return false;
 }
-class Brick extends Drawable {
-  constructor(x, y, w, h, maxHits, canvasContext){
-    super(x, y, w, h, canvasContext);
-    this.hits = 0;
-    this.maxHits = maxHits;
-    this.removed = false;
-  }
 
-  update(){
-    if((this.hits >= this.maxHits)){
-      if(this.removed)
-        return
-      this.ctx.beginPath();
-      this.ctx.clearRect(this.x,this.y,this.w, this.h);
-      this.ctx.closePath();
-      this.removed = true;
-    } else {
-      super.update();
-    }
-  }
-
-};
 
 function generateBricks(){
   templist = [];
@@ -341,31 +353,10 @@ class brickGame extends gameObject {
   }
 }
 
-
-
-// intial values
-const paddleY = canvas.height - 15; 
-const paddleX = canvas.width / 2;
-const paddleW = canvas.width / 5;
-const paddleH = 5;
-
-const brickCols = 8;
-const brickRows = 4;
-const brickOffsetX = 5; // in px
-const brickOffsetY = 3; 
-const brickW =  paddleW / 2 ;
-const brickH = paddleH * 2;
-const bricks = generateBricks();
-console.log(bricks);
-
-
-const ballX = canvas.width / 2;
-const ballY = canvas.height /2;
-const ballR = 5;
-
+// object instantiation
 const ball = new Ball(ballX, ballY, 0, 0, ballR, canvasContext);
 const paddle = new Drawable( paddleX , paddleY , paddleW , paddleH, canvasContext);
-// const bricks = new Brick( 10, 50 , paddleW / 2 , paddleH * 2, 2, canvasContext);
+const bricks = generateBricks();
 const playBrick = new brickGame(paddle, ball, 0, "brick");
 
 // ! this is helper code
@@ -383,16 +374,26 @@ function powerOn() {
   gameOn = true;
 };
 
+function startSequence() {
+  const video = document.getElementById("video");
+  video.load();
+  video.play();
+};
+
 // ! i dont think i need this function but idk
 function resetActionKeys(){
   temp = Object.keys(action_keys);
   temp.forEach(element => {
     action_keys[element].pressed = false;
   });
-}
+};
+
 function powerOff() {
   console.log('power off');
-  // canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+  canvasContext.beginPath();
+  canvasContext.clearRect(0,0,canvas.width, canvas.height);
+  canvasContext.closePath();
+
   video.classList.remove("hide");
   resetActionKeys()
   gameOn = false;
@@ -424,9 +425,6 @@ document.querySelector('.power-button').addEventListener('click', function (even
   if (target.classList.contains('power-on')) {
     target.classList.remove('power-on');
     powerOff();
-    canvasContext.beginPath();
-    canvasContext.clearRect(0,0,canvas.width, canvas.height);
-    canvasContext.closePath();
   } else {
     target.classList.add('power-on');
     powerOn();
@@ -445,4 +443,4 @@ function init() {
 }
 
 
-window.requestAnimationFrame(init)
+window.requestAnimationFrame(init);
