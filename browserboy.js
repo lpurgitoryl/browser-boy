@@ -19,7 +19,7 @@ const canvasContext = canvas.getContext("2d");
 let gameOn = false;
 
 // intial values
-const paddleY = canvas.height - 15; 
+const paddleY = canvas.height - 15;
 const paddleX = canvas.width / 2;
 const paddleW = canvas.width / 5;
 const paddleH = 5;
@@ -27,12 +27,12 @@ const paddleH = 5;
 const brickCols = 8;
 const brickRows = 4;
 const brickOffsetX = 5;
-const brickOffsetY = 3; 
-const brickW =  paddleW / 2 ;
+const brickOffsetY = 3;
+const brickW = paddleW / 2;
 const brickH = paddleH * 2;
 
 const ballX = canvas.width / 2;
-const ballY = canvas.height /2;
+const ballY = canvas.height / 2;
 const ballR = 5;
 
 // ball x/y movement 
@@ -120,7 +120,7 @@ class Drawable {
     this.y = y;
     this.w = w;
     this.h = h;
-  
+
     this.ctx = canvasContext;
   }
 
@@ -140,14 +140,14 @@ class Drawable {
 };
 
 class Ball extends Drawable {
-  constructor(x, y, w, h, radius, canvasContext){
+  constructor(x, y, w, h, radius, canvasContext) {
     super(x, y, 0, 0, canvasContext);
     this.radius = radius;
     this.startAngle = 0
     this.endAngle = Math.PI * 2;
   }
 
-  draw(){
+  draw() {
     this.ctx.beginPath();
     this.ctx.arc(this.x, this.y, this.radius, this.startAngle, this.endAngle, false);
     this.ctx.fill();
@@ -156,7 +156,7 @@ class Ball extends Drawable {
 
 }
 
-function checkAnyKeypress(){
+function checkAnyKeypress() {
   temp = Object.keys(action_keys);
   flag = false;
 
@@ -170,19 +170,19 @@ function checkAnyKeypress(){
 }
 
 class Brick extends Drawable {
-  constructor(x, y, w, h, maxHits, canvasContext){
+  constructor(x, y, w, h, maxHits, canvasContext) {
     super(x, y, w, h, canvasContext);
     this.hits = 0;
     this.maxHits = maxHits;
     this.removed = false;
   }
 
-  update(){
-    if((this.hits >= this.maxHits)){
-      if(this.removed)
+  update() {
+    if ((this.hits >= this.maxHits)) {
+      if (this.removed)
         return
       this.ctx.beginPath();
-      this.ctx.clearRect(this.x,this.y,this.w, this.h);
+      this.ctx.clearRect(this.x, this.y, this.w, this.h);
       this.ctx.closePath();
       this.removed = true;
     } else {
@@ -210,14 +210,13 @@ class gameObject {
 
 
 function paddleMoveRight() {
-  if(paddle.w + paddle.x + deltaXPaddle < canvas.width)
-    {paddle.x += deltaXPaddle;}
+  if (paddle.w + paddle.x + deltaXPaddle < canvas.width) { paddle.x += deltaXPaddle; }
   console.log('paddle moved right');
 }
 
 function paddleMoveLeft() {
-  if( paddle.x > 0)
-      paddle.x -= deltaXPaddle;
+  if (paddle.x > 0)
+    paddle.x -= deltaXPaddle;
   console.log('paddle moved left');
 }
 
@@ -226,7 +225,7 @@ const paddleAction = {
   d: { func: false },
   c: { func: false },
   v: { func: false },
-  ArrowRight:  { func : paddleMoveRight },
+  ArrowRight: { func: paddleMoveRight },
   ArrowLeft: { func: paddleMoveLeft },
   ArrowUp: { func: false },
   ArrowDown: { func: false },
@@ -244,80 +243,80 @@ function paddleHandler() {
 
 };
 
-function ballPhysics(brick){
+function ballPhysics(brick) {
   // bounce off walls
-  if( ball.x + deltaXBall < canvas.width - ball.radius) { // hasnt hit right wall yet
+  if (ball.x + deltaXBall < canvas.width - ball.radius) { // hasnt hit right wall yet
     ball.x += deltaXBall;
-  } 
-  if( ball.x + deltaXBall > canvas.width - ball.radius) { // hits right wall and changes direction
+  }
+  if (ball.x + deltaXBall > canvas.width - ball.radius) { // hits right wall and changes direction
     deltaXBall = -deltaXBall;
     ball.x += deltaXBall;
   }
-  if( ball.x + deltaXBall < 0 ) {  // hits left wall and changes direction
+  if (ball.x + deltaXBall < 0) {  // hits left wall and changes direction
     deltaXBall = -deltaXBall;
     ball.x += deltaXBall;
   }
 
-  if( ball.y + deltaYBall > 0 ) { // hasnt hit top
+  if (ball.y + deltaYBall > 0) { // hasnt hit top
     ball.y += deltaYBall;
   }
-  if( ball.y + deltaYBall < 0 ) { // hits top and changes direction
+  if (ball.y + deltaYBall < 0) { // hits top and changes direction
     deltaYBall = -deltaYBall;
     ball.y += deltaYBall;
   }
-  if( ball.y + deltaYBall > canvas.height - ball.radius ) { // ball hits floor, sets gameOver to true
+  if (ball.y + deltaYBall > canvas.height - ball.radius) { // ball hits floor, sets gameOver to true
     return true;
   }
 
-  if( (ball.y + deltaYBall > paddle.y - ball.radius ) && (ball.y < paddle.y - ball.radius + paddle.h) && (ball.x > paddle.x - ball.radius ) && (ball.x < paddle.x + paddle.w - ball.radius )  ) { // ball hits paddle but not floor and redirects
+  if ((ball.y + deltaYBall > paddle.y - ball.radius) && (ball.y < paddle.y - ball.radius + paddle.h) && (ball.x > paddle.x - ball.radius) && (ball.x < paddle.x + paddle.w - ball.radius)) { // ball hits paddle but not floor and redirects
     deltaYBall = -deltaYBall;
     ball.y += deltaYBall;
   }
 
-  for(let i = 0; i < brickCols ; i++){
-    for(let j = 0; j < brickRows ; j++){
-      if(didBallHitBrick(bricks[i][j]) && !(bricks[i][j].removed)){
+  for (let i = 0; i < brickCols; i++) {
+    for (let j = 0; j < brickRows; j++) {
+      if (didBallHitBrick(bricks[i][j]) && !(bricks[i][j].removed)) {
         deltaYBall = -deltaYBall;
         ball.y += deltaYBall;
       }
+    }
   }
-  }
-  
+
   return false;
 }
 
 
-function generateBricks(){
+function generateBricks() {
   templist = [];
   console.log(templist);
-  for(let i = 0; i < brickCols ; i++){
+  for (let i = 0; i < brickCols; i++) {
     templist[i] = [];
-    for(let j = 0; j < brickRows ; j++){
-      by = (j * (brickH + brickOffsetX )) + 5 ;
-      bx = (i * (brickW+ brickOffsetY )) + 5;
+    for (let j = 0; j < brickRows; j++) {
+      by = (j * (brickH + brickOffsetX)) + 5;
+      bx = (i * (brickW + brickOffsetY)) + 5;
 
-      templist[i][j] = new Brick( bx, by, brickW , brickH, brickRows - j, canvasContext);
-  }
+      templist[i][j] = new Brick(bx, by, brickW, brickH, brickRows - j, canvasContext);
+    }
   }
 
   return templist;
 }
 
-function updateAllBricks (){
+function updateAllBricks() {
 
-  for(let i = 0; i < brickCols ; i++){
-    for(let j = 0; j < brickRows ; j++){
+  for (let i = 0; i < brickCols; i++) {
+    for (let j = 0; j < brickRows; j++) {
 
-     bricks[i][j].update();
-  }
+      bricks[i][j].update();
+    }
   }
 
 }
 
-function didBallHitBrick(brick){
-  if ((ball.x > brick.x - ball.radius) && (ball.x < brick.x + brick.w - ball.radius) && (ball.y > brick.y - ball.radius) && (ball.y < brick.y - ball.radius + brick.h)){
+function didBallHitBrick(brick) {
+  if ((ball.x > brick.x - ball.radius) && (ball.x < brick.x + brick.w - ball.radius) && (ball.y > brick.y - ball.radius) && (ball.y < brick.y - ball.radius + brick.h)) {
     brick.hits += 1;
-    drawText('hit', 50,50);
+    drawText('hit', 50, 50);
     return true;
   }
   return false;
@@ -330,8 +329,8 @@ class brickGame extends gameObject {
     this.gameOver = false;
   }
 
-  runGame(){
-    if(!this.started){
+  runGame() {
+    if (!this.started) {
       this.started = checkAnyKeypress();
       console.log('no keys pressed yet for brick');
       ball.update();
@@ -340,8 +339,8 @@ class brickGame extends gameObject {
       return;
     }
     super.runGame();
-    if(this.gameOver){
-      drawText("GAME OVER: YOU LOST", 20, canvas.height/2);
+    if (this.gameOver) {
+      drawText("GAME OVER: YOU LOST", 20, canvas.height / 2);
       return;
     }
     this.gameOver = ballPhysics(bricks);
@@ -349,13 +348,13 @@ class brickGame extends gameObject {
     ball.update();
     paddle.update();
     updateAllBricks();
-    
+
   }
 }
 
 // object instantiation
 const ball = new Ball(ballX, ballY, 0, 0, ballR, canvasContext);
-const paddle = new Drawable( paddleX , paddleY , paddleW , paddleH, canvasContext);
+const paddle = new Drawable(paddleX, paddleY, paddleW, paddleH, canvasContext);
 const bricks = generateBricks();
 const playBrick = new brickGame(paddle, ball, 0, "brick");
 
@@ -381,7 +380,7 @@ function startSequence() {
 };
 
 // ! i dont think i need this function but idk
-function resetActionKeys(){
+function resetActionKeys() {
   temp = Object.keys(action_keys);
   temp.forEach(element => {
     action_keys[element].pressed = false;
@@ -391,7 +390,7 @@ function resetActionKeys(){
 function powerOff() {
   console.log('power off');
   canvasContext.beginPath();
-  canvasContext.clearRect(0,0,canvas.width, canvas.height);
+  canvasContext.clearRect(0, 0, canvas.width, canvas.height);
   canvasContext.closePath();
 
   video.classList.remove("hide");
@@ -403,15 +402,15 @@ function powerOff() {
 function runBrowserBoy() {
   // TODO: uncooment the ended listener when finished with game and menu and the start sequence in poweron()
   // video.addEventListener("ended", (event) => {
-    console.log("Video stopped either because it has finished playing or no further data is available.");
+  console.log("Video stopped either because it has finished playing or no further data is available.");
   video.classList.add("hide");
 
   canvasContext.beginPath();
-  canvasContext.clearRect(0,0,canvas.width, canvas.height);
+  canvasContext.clearRect(0, 0, canvas.width, canvas.height);
   canvasContext.closePath();
   playBrick.runGame();
   // });
-  
+
 };
 
 // ! this code runs everything
@@ -437,9 +436,9 @@ function init() {
   if (!gameOn) {
     // console.log("game is not on")
     return;
-  } 
+  }
   runBrowserBoy();
-  
+
 }
 
 
