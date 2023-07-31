@@ -235,6 +235,16 @@ function ballPhysics(brick){
     deltaYBall = -deltaYBall;
     ball.y += deltaYBall;
   }
+
+  for(let i = 0; i < brickCols ; i++){
+    for(let j = 0; j < brickRows ; j++){
+      if(didBallHitBrick(bricks[i][j]) && !(bricks[i][j].removed)){
+        deltaYBall = -deltaYBall;
+        ball.y += deltaYBall;
+      }
+  }
+  }
+  
   // if(didBallHitBrick(brick)){
   //   deltaYBall = -deltaYBall;
   //   ball.y += deltaYBall;
@@ -247,13 +257,17 @@ class Brick extends Drawable {
     super(x, y, w, h, canvasContext);
     this.hits = 0;
     this.maxHits = maxHits;
+    this.removed = false;
   }
 
   update(){
-    if(this.hits >= this.maxHits){
+    if((this.hits >= this.maxHits)){
+      if(this.removed)
+        return
       this.ctx.beginPath();
       this.ctx.clearRect(this.x,this.y,this.w, this.h);
       this.ctx.closePath();
+      this.removed = true;
     } else {
       super.update();
     }
@@ -264,13 +278,13 @@ class Brick extends Drawable {
 function generateBricks(){
   templist = [];
   console.log(templist);
-  for(let i = 0; i < brickRows ; i++){
+  for(let i = 0; i < brickCols ; i++){
     templist[i] = [];
-    for(let j = 0; j < brickCols ; j++){
+    for(let j = 0; j < brickRows ; j++){
       by = (j * (brickH + brickOffsetX )) + 5 ;
       bx = (i * (brickW+ brickOffsetY )) + 5;
 
-      templist[i][j] = new Brick( bx, by, brickW , brickH, j+1, canvasContext);
+      templist[i][j] = new Brick( bx, by, brickW , brickH, brickRows - j, canvasContext);
   }
   }
 
@@ -279,8 +293,8 @@ function generateBricks(){
 
 function updateAllBricks (){
 
-  for(let i = 0; i < brickRows ; i++){
-    for(let j = 0; j < brickCols ; j++){
+  for(let i = 0; i < brickCols ; i++){
+    for(let j = 0; j < brickRows ; j++){
 
      bricks[i][j].update();
   }
@@ -335,8 +349,8 @@ const paddleX = canvas.width / 2;
 const paddleW = canvas.width / 5;
 const paddleH = 5;
 
-const brickRows = 8;
-const brickCols = 4;
+const brickCols = 8;
+const brickRows = 4;
 const brickOffsetX = 5; // in px
 const brickOffsetY = 3; 
 const brickW =  paddleW / 2 ;
