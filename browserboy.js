@@ -32,8 +32,6 @@ window.addEventListener('keydown', (event) => {
   }
   action_keys[event.key].pressed = true;
   event.preventDefault();
-  console.log(event.key + " keydown");
-  console.log("this is the action key value " + action_keys[event.key].pressed );
 });
 
 
@@ -44,9 +42,6 @@ window.addEventListener('keyup', (event) => {
   }
   action_keys[event.key].pressed = false;
   event.preventDefault();
-  console.log(event.key + " no longer pressed");
-  console.log(event.key + " keyup");
-  console.log("this is the action key value " + action_keys[event.key].pressed );
 });
 
 function handleStart(evt) {
@@ -170,11 +165,9 @@ const paddleAction = {
 function paddleHandler() {
   temp = Object.keys(action_keys);
   temp.forEach(element => {
-    console.log( "this is the key being checked" + element)
-    console.log("this is the value " + action_keys[element].pressed)
     if (action_keys[element].pressed) {
       paddleAction[element].func();
-      console.log('key action for paddle')
+      // console.log('key action for paddle')
     }
   });
 
@@ -242,10 +235,10 @@ function ballPhysics(brick){
     deltaYBall = -deltaYBall;
     ball.y += deltaYBall;
   }
-  if(didBallHitBrick(brick)){
-    deltaYBall = -deltaYBall;
-    ball.y += deltaYBall;
-  }
+  // if(didBallHitBrick(brick)){
+  //   deltaYBall = -deltaYBall;
+  //   ball.y += deltaYBall;
+  // }
 
   return false;
 }
@@ -267,6 +260,33 @@ class Brick extends Drawable {
   }
 
 };
+
+function generateBricks(){
+  templist = [];
+  console.log(templist);
+  for(let i = 0; i < brickRows ; i++){
+    templist[i] = [];
+    for(let j = 0; j < brickCols ; j++){
+      by = (j * (brickH + brickOffsetX )) + 5 ;
+      bx = (i * (brickW+ brickOffsetY )) + 5;
+
+      templist[i][j] = new Brick( bx, by, brickW , brickH, j+1, canvasContext);
+  }
+  }
+
+  return templist;
+}
+
+function updateAllBricks (){
+
+  for(let i = 0; i < brickRows ; i++){
+    for(let j = 0; j < brickCols ; j++){
+
+     bricks[i][j].update();
+  }
+  }
+
+}
 
 function didBallHitBrick(brick){
   if ((ball.x > brick.x - ball.radius) && (ball.x < brick.x + brick.w - ball.radius) && (ball.y > brick.y - ball.radius) && (ball.y < brick.y - ball.radius + brick.h)){
@@ -290,7 +310,7 @@ class brickGame extends gameObject {
       console.log('no keys pressed yet for brick');
       ball.update();
       paddle.update();
-      bricks.update();
+      updateAllBricks();
       return;
     }
     super.runGame();
@@ -302,21 +322,28 @@ class brickGame extends gameObject {
     paddleHandler();
     ball.update();
     paddle.update();
-    bricks.update();
+    updateAllBricks();
     
   }
 }
 
-// intial paddle values
-const brickRows = 3;
-const brickOffset = 5; // in px
-const numBricksPerRow = 6;
 
 
+// intial values
 const paddleY = canvas.height - 15; 
 const paddleX = canvas.width / 2;
 const paddleW = canvas.width / 5;
 const paddleH = 5;
+
+const brickRows = 8;
+const brickCols = 4;
+const brickOffsetX = 5; // in px
+const brickOffsetY = 3; 
+const brickW =  paddleW / 2 ;
+const brickH = paddleH * 2;
+const bricks = generateBricks();
+console.log(bricks);
+
 
 const ballX = canvas.width / 2;
 const ballY = canvas.height /2;
@@ -324,7 +351,7 @@ const ballR = 5;
 
 const ball = new Ball(ballX, ballY, 0, 0, ballR, canvasContext);
 const paddle = new Drawable( paddleX , paddleY , paddleW , paddleH, canvasContext);
-const bricks = new Brick( 10, 50 , paddleW / 2 , paddleH * 2, 2, canvasContext);
+// const bricks = new Brick( 10, 50 , paddleW / 2 , paddleH * 2, 2, canvasContext);
 const playBrick = new brickGame(paddle, ball, 0, "brick");
 
 // ! this is helper code
@@ -346,10 +373,7 @@ function powerOn() {
 function resetActionKeys(){
   temp = Object.keys(action_keys);
   temp.forEach(element => {
-    console.log( "this is the key being reset" + element);
-    console.log("this is the value before" + action_keys[element].pressed);
     action_keys[element].pressed = false;
-    console.log("this is the value after" + action_keys[element].pressed);
   });
 }
 function powerOff() {
@@ -397,9 +421,9 @@ document.querySelector('.power-button').addEventListener('click', function (even
 
 function init() {
   window.requestAnimationFrame(init)
-  console.log("this is the game flag " + gameOn)
+  // console.log("this is the game flag " + gameOn)
   if (!gameOn) {
-    console.log("game is not on")
+    // console.log("game is not on")
     return;
   } 
   runBrowserBoy();
