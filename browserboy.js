@@ -141,7 +141,7 @@ class gameObject {
 };
 
 // ! here is the brick game instantiation
-const deltaXPaddle = 10;
+const deltaXPaddle = 2;
 
 function paddleMoveRight() {
   if(paddle.w + paddle.x + deltaXPaddle < canvas.width)
@@ -238,7 +238,7 @@ function ballPhysics(brick){
     return true;
   }
 
-  if( (ball.y + deltaYBall > paddle.y - ball.radius ) && (ball.x > paddle.x) && (ball.x < paddle.x + paddle.w) ) { // ball hits paddle but not floor and redirects
+  if( (ball.y + deltaYBall > paddle.y - ball.radius ) && (ball.y < paddle.y - ball.radius + paddle.h) && (ball.x > paddle.x - ball.radius ) && (ball.x < paddle.x + paddle.w - ball.radius )  ) { // ball hits paddle but not floor and redirects
     deltaYBall = -deltaYBall;
     ball.y += deltaYBall;
   }
@@ -291,7 +291,7 @@ class brickGame extends gameObject {
       ball.update();
       paddle.update();
       bricks.update();
-      return
+      return;
     }
     super.runGame();
     if(this.gameOver){
@@ -308,6 +308,11 @@ class brickGame extends gameObject {
 }
 
 // intial paddle values
+const brickRows = 3;
+const brickOffset = 5; // in px
+const numBricksPerRow = 6;
+
+
 const paddleY = canvas.height - 15; 
 const paddleX = canvas.width / 2;
 const paddleW = canvas.width / 5;
