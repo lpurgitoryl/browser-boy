@@ -40,7 +40,9 @@ var deltaXBall = 2;
 var deltaYBall = -2;
 
 // paddle movement
-const deltaXPaddle = 2;
+const deltaXPaddle = 4;
+
+let videoHasEnded = false;
 
 // Uncomment function below for on screen log
 // function log(msg) {
@@ -181,9 +183,9 @@ class Brick extends Drawable {
     if ((this.hits >= this.maxHits)) {
       if (this.removed)
         return
-      this.ctx.beginPath();
-      this.ctx.clearRect(this.x, this.y, this.w, this.h);
-      this.ctx.closePath();
+      // this.ctx.beginPath();
+      // this.ctx.clearRect(this.x, this.y, this.w, this.h);
+      // this.ctx.closePath();
       this.removed = true;
     } else {
       super.update();
@@ -313,10 +315,9 @@ function updateAllBricks() {
 
 }
 
-function didBallHitBrick(brick) {
-  if ((ball.x > brick.x - ball.radius) && (ball.x < brick.x + brick.w - ball.radius) && (ball.y > brick.y - ball.radius) && (ball.y < brick.y - ball.radius + brick.h)) {
+function didBallHitBrick(brick) { // theres some issues here idk
+  if ((ball.x > brick.x + ball.radius) && (ball.x < brick.x + brick.w + ball.radius) && (ball.y > brick.y + ball.radius) && (ball.y < brick.y + ball.radius + brick.h)) {
     brick.hits += 1;
-    drawText('hit', 50, 50);
     return true;
   }
   return false;
@@ -330,6 +331,10 @@ class brickGame extends gameObject {
   }
 
   runGame() {
+    canvasContext.beginPath();
+    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+    canvasContext.closePath();
+    
     if (!this.started) {
       this.started = checkAnyKeypress();
       console.log('no keys pressed yet for brick');
@@ -355,20 +360,20 @@ class brickGame extends gameObject {
 // object instantiation
 const ball = new Ball(ballX, ballY, 0, 0, ballR, canvasContext);
 const paddle = new Drawable(paddleX, paddleY, paddleW, paddleH, canvasContext);
-const bricks = generateBricks();
+let bricks = generateBricks();
 const playBrick = new brickGame(paddle, ball, 0, "brick");
 
-// ! this is helper code
+// ! this is non game code
 function drawText(text, xpos, ypos, font = 'bold 12px Arial') {
   canvasContext.font = font;
   canvasContext.fillStyle = 'black';
   canvasContext.fillText(text, xpos, ypos);
 }
-// TODO: uncomment start sequence when done with main menu and game
+
 function powerOn() {
   videoLen = 5.1 * 1000;
   console.log('power on');
-  // startSequence();
+  startSequence();
   buttonTouchOrClick(touchAndClickableIDs);
   gameOn = true;
 };
@@ -400,16 +405,19 @@ function powerOff() {
 };
 
 function runBrowserBoy() {
-  // TODO: uncooment the ended listener when finished with game and menu and the start sequence in poweron()
-  // video.addEventListener("ended", (event) => {
+  video.addEventListener("ended", (event) => {
   console.log("Video stopped either because it has finished playing or no further data is available.");
   video.classList.add("hide");
 
   canvasContext.beginPath();
   canvasContext.clearRect(0, 0, canvas.width, canvas.height);
   canvasContext.closePath();
-  playBrick.runGame();
-  // });
+  videoHasEnded = true;
+  });
+
+  if(videoHasEnded){
+    playBrick.runGame();
+  }
 
 };
 
