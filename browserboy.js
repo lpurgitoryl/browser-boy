@@ -295,7 +295,7 @@ function generateBricks() {
       by = (j * (brickH + brickOffsetX)) + 5;
       bx = (i * (brickW + brickOffsetY)) + 5;
 
-      templist[i][j] = new Brick(bx, by, brickW, brickH, brickRows - j, canvasContext);
+      templist[i][j] = new Brick(Math.floor(bx), Math.floor(by), Math.floor(brickW), Math.floor(brickH), brickRows - j, canvasContext);
     }
   }
 
