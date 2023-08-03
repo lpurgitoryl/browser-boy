@@ -42,6 +42,7 @@ var deltaYBall = -2;
 // paddle movement
 const deltaXPaddle = 4;
 
+const video = document.getElementById("video");
 let videoHasEnded = false;
 
 // Uncomment function below for on screen log
@@ -358,8 +359,8 @@ class brickGame extends gameObject {
 }
 
 // object instantiation
-const ball = new Ball(ballX, ballY, 0, 0, ballR, canvasContext);
-const paddle = new Drawable(paddleX, paddleY, paddleW, paddleH, canvasContext);
+let ball = new Ball(ballX, ballY, 0, 0, ballR, canvasContext);
+let paddle = new Drawable(paddleX, paddleY, paddleW, paddleH, canvasContext);
 let bricks = generateBricks();
 const playBrick = new brickGame(paddle, ball, 0, "brick");
 
@@ -379,7 +380,6 @@ function powerOn() {
 };
 
 function startSequence() {
-  const video = document.getElementById("video");
   video.load();
   video.play();
 };
@@ -401,6 +401,15 @@ function powerOff() {
   video.classList.remove("hide");
   resetActionKeys()
   gameOn = false;
+  videoHasEnded = false;
+  playBrick.started = false;
+  playBrick.gameOver = false;
+  ball = new Ball(ballX, ballY, 0, 0, ballR, canvasContext);
+  paddle = new Drawable(paddleX, paddleY, paddleW, paddleH, canvasContext);
+  bricks = generateBricks();
+
+  video.load();
+
 
 };
 
