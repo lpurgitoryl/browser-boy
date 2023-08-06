@@ -1,18 +1,15 @@
 // ! these are the global consts free to use anywhere 
 const action_keys = {
-  a: { pressed: false },
-  d: { pressed: false },
-  c: { pressed: false },
-  v: { pressed: false },
-  ArrowRight: { pressed: false },
-  ArrowLeft: { pressed: false },
-  ArrowUp: { pressed: false },
-  ArrowDown: { pressed: false },
+  a: { pressed: false, id: 'controller_a' },
+  d: { pressed: false, id: 'controller_b' },
+  c: { pressed: false, id: 'controller_start' },
+  v: { pressed: false, id: 'controller_select' },
+  ArrowRight: { pressed: false, id: 'controller_right' },
+  ArrowLeft: { pressed: false, id: 'controller_left' },
+  ArrowUp: { pressed: false, id: 'controller_up' },
+  ArrowDown: { pressed: false, id: 'controller_down' },
 
 };
-
-const touchAndClickableIDs = ['controller_up', 'controller_down', 'controller_left', 'controller_right',
-  'controller_a', 'controller_b', 'controller_start', 'controller_select'];
 
 const canvas = document.getElementById("mainCanvas");
 const canvasContext = canvas.getContext("2d");
@@ -58,7 +55,7 @@ let videoHasEnded = false;
 window.addEventListener('keydown', (event) => {
   if (!(event.key in action_keys)) {
     console.log("key has no action");
-    return
+    return;
   }
   action_keys[event.key].pressed = true;
   event.preventDefault();
@@ -68,7 +65,7 @@ window.addEventListener('keydown', (event) => {
 window.addEventListener('keyup', (event) => {
   if (!(event.key in action_keys)) {
     console.log("key has no action");
-    return
+    return;
   }
   action_keys[event.key].pressed = false;
   event.preventDefault();
@@ -76,21 +73,25 @@ window.addEventListener('keyup', (event) => {
 
 function handleStart(evt) {
   evt.preventDefault();
-  const touches = evt.changedTouches;
-
-  for (let i = 0; i < touches.length; i++) {
-    console.log(`target ${this.id} touch with id ${touches[i].identifier} started`);
-  }
+  let id = this.id;
+  temp = Object.keys(action_keys);
+  temp.forEach(element => {
+    if (action_keys[element].id == id) {
+      action_keys[element].pressed = true;
+    }
+  });
 
 };
 
 function handleEnd(evt) {
   evt.preventDefault();
-  const touches = evt.changedTouches;
-
-  for (let i = 0; i < touches.length; i++) {
-    console.log(`target ${this.id} touch with id ${touches[i].identifier} ended`);
-  }
+  let id = this.id;
+  temp = Object.keys(action_keys);
+  temp.forEach(element => {
+    if (action_keys[element].id == id) {
+      action_keys[element].pressed = false;
+    }
+  });
 };
 
 function handleDown(evt) {
@@ -102,16 +103,19 @@ function handleUp(evt) {
   console.log(`target ${this.id} mouse/click ended`);
 };
 
-function buttonTouchOrClick(touchAndClickableIDs) {
-  for (let i = 0; i < touchAndClickableIDs.length; i++) {
-    document.getElementById(touchAndClickableIDs[i]).addEventListener("touchstart", handleStart);
-    document.getElementById(touchAndClickableIDs[i]).addEventListener("touchend", handleEnd);
+function buttonTouchOrClick() {
+  temp = Object.keys(action_keys);
+  temp.forEach(element => {
+    document.getElementById(action_keys[element].id).addEventListener("touchstart", handleStart);
+    document.getElementById(action_keys[element].id).addEventListener("touchend", handleEnd);
 
-    document.getElementById(touchAndClickableIDs[i]).addEventListener("mouseup", handleUp);
-    document.getElementById(touchAndClickableIDs[i]).addEventListener("mousedown", handleDown);
-    console.log(touchAndClickableIDs[i]);
-  }
-  console.log('listeners added')
+    document.getElementById(action_keys[element].id).addEventListener("mouseup", handleUp);
+    document.getElementById(action_keys[element].id).addEventListener("mousedown", handleDown);
+    console.log(action_keys[element].id);
+
+  });
+
+  console.log('touch and click listeners added');
 };
 
 //! here are the diffrent classes
@@ -181,12 +185,10 @@ class Brick extends Drawable {
   }
 
   update() {
-    if ((this.hits >= this.maxHits)) {
-      if (this.removed)
-        return
-      // this.ctx.beginPath();
-      // this.ctx.clearRect(this.x, this.y, this.w, this.h);
-      // this.ctx.closePath();
+    if (this.hits >= this.maxHits) {
+      if (this.removed) {
+        return;
+      }
       this.removed = true;
     } else {
       super.update();
@@ -238,16 +240,15 @@ const paddleAction = {
 function paddleHandler() {
   temp = Object.keys(action_keys);
   temp.forEach(element => {
-    if (action_keys[element].pressed) {
+    if (action_keys[element].pressed && (paddleAction[element].func != false)) {
       paddleAction[element].func();
-      // console.log('key action for paddle')
     }
   });
 
 };
 
-function ballPhysics(brick) {
-  // bounce off walls
+function ballPhysics() {
+
   if (ball.x + deltaXBall < canvas.width - ball.radius) { // hasnt hit right wall yet
     ball.x += deltaXBall;
   }
@@ -335,7 +336,7 @@ class brickGame extends gameObject {
     canvasContext.beginPath();
     canvasContext.clearRect(0, 0, canvas.width, canvas.height);
     canvasContext.closePath();
-    
+
     if (!this.started) {
       this.started = checkAnyKeypress();
       console.log('no keys pressed yet for brick');
@@ -349,7 +350,7 @@ class brickGame extends gameObject {
       drawText("GAME OVER: YOU LOST", 20, canvas.height / 2);
       return;
     }
-    this.gameOver = ballPhysics(bricks);
+    this.gameOver = ballPhysics();
     paddleHandler();
     ball.update();
     paddle.update();
@@ -375,7 +376,7 @@ function powerOn() {
   videoLen = 5.1 * 1000;
   console.log('power on');
   startSequence();
-  buttonTouchOrClick(touchAndClickableIDs);
+  buttonTouchOrClick();
   gameOn = true;
 };
 
@@ -410,21 +411,20 @@ function powerOff() {
 
   video.load();
 
-
 };
 
 function runBrowserBoy() {
   video.addEventListener("ended", (event) => {
-  console.log("Video stopped either because it has finished playing or no further data is available.");
-  video.classList.add("hide");
+    console.log("Video stopped either because it has finished playing or no further data is available.");
+    video.classList.add("hide");
 
-  canvasContext.beginPath();
-  canvasContext.clearRect(0, 0, canvas.width, canvas.height);
-  canvasContext.closePath();
-  videoHasEnded = true;
+    canvasContext.beginPath();
+    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+    canvasContext.closePath();
+    videoHasEnded = true;
   });
 
-  if(videoHasEnded){
+  if (videoHasEnded) {
     playBrick.runGame();
   }
 
@@ -449,13 +449,10 @@ document.querySelector('.power-button').addEventListener('click', function (even
 
 function init() {
   window.requestAnimationFrame(init)
-  // console.log("this is the game flag " + gameOn)
-  if (!gameOn) {
-    // console.log("game is not on")
+  if (!gameOn) { // console.log("game is not on")
     return;
   }
   runBrowserBoy();
-
 }
 
 
