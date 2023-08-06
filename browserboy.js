@@ -381,6 +381,7 @@ function powerOn() {
 };
 
 function startSequence() {
+  video.controls = false;
   video.load();
   video.play();
 };
