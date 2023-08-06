@@ -10,3 +10,10 @@
   #video {
     opacity: .3;
   }
+  #toggle-wrapper {
+    display: flex;
+    flex-direction: row-reverse;
+  }
+  #toggle {
+    width: 5%;
+  }
