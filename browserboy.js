@@ -120,7 +120,7 @@ function buttonTouchOrClick() {
 
 //! here are the diffrent classes
 // using classes v loosley just so i can call update on each object easily
-// im consiously not following best practices for OOP since this is a small game
+// im consiously NOT following best practices for OOP since this is a small game
 class Drawable {
   constructor(x, y, w, h, canvasContext) {
     this.x = x;

@@ -1,6 +1,6 @@
 .game-boy-wrapper {
   display: flex;
-  height: 70vh; 
+  height: 90vh; 
   /* was 90 vh before */
   align-items: center;
   justify-content: center;

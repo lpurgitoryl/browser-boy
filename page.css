@@ -1,0 +1,26 @@
+#log {
+  height: 50%;
+  width: 20%;
+  position: relative;
+  flex-shrink: 0;
+  overflow: auto;
+}
+
+#video {
+  opacity: .3;
+}
+
+#toggle-wrapper {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+#toggle {
+  width: 5%;
+  position: absolute;
+  animation: fadeIn 1s
+}
+
+body {
+  transition: background-color 1s ease;
+}
