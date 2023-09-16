@@ -347,7 +347,17 @@ class brickGame extends gameObject {
     }
     super.runGame();
     if (this.gameOver) {
-      drawText("GAME OVER: YOU LOST", 20, canvas.height / 2);
+      drawText("GAME OVER", 10, canvas.height / 2  - 25, "bold 25px Arial");
+      drawText("YOU LOST", 20, canvas.height / 2, "bold 25px Arial");
+      drawText("press any button to play again!", 1 , canvas.height / 2 + 25 );
+
+      if(checkAnyKeypress()){
+        this.started = false;
+        this.gameOver = false;
+        ball = new Ball(ballX, ballY, 0, 0, ballR, canvasContext);
+        paddle = new Drawable(paddleX, paddleY, paddleW, paddleH, canvasContext);
+        bricks = generateBricks();
+      }
       return;
     }
     this.gameOver = ballPhysics();
@@ -366,9 +376,9 @@ let bricks = generateBricks();
 const playBrick = new brickGame(paddle, ball, 0, "brick");
 
 // ! this is non game code
-function drawText(text, xpos, ypos, font = 'bold 12px Arial') {
+function drawText(text, xpos, ypos, font = "bold 12px Arial") {
   canvasContext.font = font;
-  canvasContext.fillStyle = 'black';
+  canvasContext.fillStyle = "black";
   canvasContext.fillText(text, xpos, ypos);
 }
 
@@ -432,7 +442,6 @@ function runBrowserBoy() {
 };
 
 // ! this code runs everything
-// TODO: reset all vars upon power off
 // TODO: menu
 
 
@@ -450,7 +459,7 @@ document.querySelector('.power-button').addEventListener('click', function (even
 
 function init() {
   window.requestAnimationFrame(init)
-  if (!gameOn) { // console.log("game is not on")
+  if (!gameOn) {
     return;
   }
   runBrowserBoy();
