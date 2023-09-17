@@ -7,16 +7,16 @@
   <title>Browser Boy by lpurgitoryl</title>
 
   <link rel="stylesheet" href="gameboy.css">
+  <link rel="stylesheet" href="page.css">
 </head>
 <body>
-  <header>
-    <nav id="nav">
-      <a></a>
-    </nav>
-
-  </header>
-
+  <div id="toggle-wrapper">
+    <img id="toggle" src="sun.svg" alt="sun svg" />
+  </div>
   <section class="game-boy-wrapper">
+    <!-- uncomment out log item and log function for on screen console -->
+    <!-- Log:
+    <pre id="log" style="border: 5px solid #ccc;"></pre> -->
     <div class="gameboy ">
       <div class="front-plate">
         <div class="front-plate-head">
@@ -48,10 +48,13 @@
           </div>
     
           <div class="screen">
-            <br />
-            Log:
-            <pre id="log" style="border: 5px solid #ccc;"></pre>
-    
+            <div class="game-container">
+              <canvas id="mainCanvas" class="game-canvas" width="176" height="158">No Canvas Support</canvas>
+              <video width="100%" height="100%" id="video" webkit-playsinline playsinline>
+                <source src="https://www.benjaminwalsh.co.uk/videos/boot.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+              </video>
+            </div>
           </div>
         </div>
     
@@ -130,6 +133,6 @@
     </div>
   </section>
 </body>
+<script src="utils.js"></script>
 <script src="browserboy.js"></script>
-<script src="bboy_setup.js"></script>
 </html>
